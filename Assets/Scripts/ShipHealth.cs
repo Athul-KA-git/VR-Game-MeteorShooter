@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -17,44 +16,34 @@ public class ShipHealth : MonoBehaviour
 
     [Header("Effects")]
     public CameraShake cameraShake;
-    public AudioSource hitSound;   //  Add this
+    public AudioSource hitSound;
 
-    [Header("Damage Flash")]
-    public CanvasGroup damageFlash;   //  Add this
-    public float flashDuration = 0.2f;
+    [Header("Post Processing")]
+    public DamageVolumeController damageVolume;   //  New Global Volume Controller
 
     public void TakeDamage(int damage)
     {
         health -= damage;
-
         Debug.Log("Ship Health: " + health);
 
+        // Update Health Bar
         if (healthUI != null)
             healthUI.UpdateHealth();
 
-        //  Play hit sound
+        // Play Hit Sound
         if (hitSound != null)
             hitSound.Play();
 
-        //  Camera Shake
+        // Camera Shake
         if (cameraShake != null)
             StartCoroutine(cameraShake.Shake(0.2f, 0.02f));
 
-        //  Red Flash
-        if (damageFlash != null)
-            StartCoroutine(FlashRed());
+        // Trigger URP Vignette Damage Flash
+        if (damageVolume != null)
+            damageVolume.TriggerDamage();
 
         if (health <= 0)
-        {
             GameOver();
-        }
-    }
-
-    IEnumerator FlashRed()
-    {
-        damageFlash.alpha = 0.6f;
-        yield return new WaitForSeconds(flashDuration);
-        damageFlash.alpha = 0f;
     }
 
     void GameOver()
