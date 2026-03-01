@@ -118,7 +118,7 @@ MonoBehaviour:
   damage: 1
   rotationSpeed: 60
   explosionSound: {fileID: 8300000, guid: 6acfde59ba95d3649ab8eb670c722833, type: 3}
-  explosionVFX: {fileID: 0}
+  explosionVFX: {fileID: 3077343761403282166, guid: f78aaaec3b393e24ca74cd6de8194347, type: 3}
 --- !u!65 &5408558293509964324
 BoxCollider:
   m_ObjectHideFlags: 0
