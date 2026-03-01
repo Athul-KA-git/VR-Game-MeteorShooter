@@ -8,15 +8,19 @@ public class Meteor : MonoBehaviour
     [Header("Rotation Settings")]
     public float rotationSpeed = 60f;
 
+    [Header("Explosion")]
+    public AudioClip explosionSound;
+    public GameObject explosionVFX; // optional particle prefab
+
     private Transform target;
     private Rigidbody rb;
     private Vector3 rotationAxis;
 
+    private bool isDestroyed = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
-        // Random rotation direction
         rotationAxis = Random.onUnitSphere;
     }
 
@@ -24,43 +28,68 @@ public class Meteor : MonoBehaviour
     {
         target = shipTarget;
 
-        // Scale meteor
         transform.localScale *= sizeMultiplier;
 
-        // Bigger meteor = more damage
         damage = Mathf.RoundToInt(damage * sizeMultiplier);
-
-        // OPTIONAL: Bigger meteors spin slower (realistic)
         rotationSpeed /= sizeMultiplier;
     }
 
     private void FixedUpdate()
     {
-        if (target == null) return;
+        if (target == null || isDestroyed) return;
 
-        // Move toward ship
         Vector3 direction = (target.position - transform.position).normalized;
         rb.linearVelocity = direction * speed;
 
-        // Rotate meteor
-        transform.Rotate(rotationAxis * rotationSpeed * Time.fixedDeltaTime, Space.World);
+        rb.MoveRotation(rb.rotation *
+            Quaternion.AngleAxis(rotationSpeed * Time.fixedDeltaTime, rotationAxis));
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        ShipHealth ship = other.gameObject.GetComponentInParent<ShipHealth>();
+        if (isDestroyed) return;
 
+        // Hit Ship
+        ShipHealth ship = other.gameObject.GetComponentInParent<ShipHealth>();
         if (ship != null)
         {
             ship.TakeDamage(damage);
-            Destroy(gameObject);
+            DestroyMeteor();
             return;
         }
 
+        // Hit Bullet
         if (other.gameObject.CompareTag("Bullet"))
         {
             Destroy(other.gameObject);
-            Destroy(gameObject);
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(1);
+            }
+
+            DestroyMeteor();
         }
+    }
+
+    private void DestroyMeteor()
+    {
+        if (isDestroyed) return;
+
+        isDestroyed = true;
+
+        //  Play Explosion Sound (3D)
+        if (explosionSound != null)
+        {
+            AudioSource.PlayClipAtPoint(explosionSound, transform.position, 1f);
+        }
+
+        //  Spawn Explosion VFX
+        if (explosionVFX != null)
+        {
+            Instantiate(explosionVFX, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
     }
 }
