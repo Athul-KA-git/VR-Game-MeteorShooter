@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -6,9 +7,11 @@ public class GameManager : MonoBehaviour
 
     public int score = 0;
 
+    [Header("Score Display (3D Text)")]
+    public TextMeshPro scoreText3D;   // 3D TMP (NOT UGUI)
+
     private void Awake()
     {
-        // Singleton Setup
         if (Instance == null)
         {
             Instance = this;
@@ -19,28 +22,31 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Ensure game runs normally at start
         Time.timeScale = 1f;
     }
 
-    private void OnApplicationFocus(bool hasFocus)
+    private void Start()
     {
-        if (hasFocus)
-            Time.timeScale = 1f;
+        UpdateScoreUI();
     }
-
-    // =========================
-    // SCORE SYSTEM
-    // =========================
 
     public void AddScore(int amount)
     {
         score += amount;
-        Debug.Log("Score: " + score);
+        UpdateScoreUI();
     }
 
     public void ResetScore()
     {
         score = 0;
+        UpdateScoreUI();
+    }
+
+    void UpdateScoreUI()
+    {
+        if (scoreText3D != null)
+        {
+            scoreText3D.text = "Score: " + score;
+        }
     }
 }
