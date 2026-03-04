@@ -31,12 +31,36 @@ public class ShipHealth : MonoBehaviour
     private bool isPaused = false;
     private bool isGameOver = false;
 
+    private bool buttonWasPressed = false;
+
     void Update()
     {
-        if (!isGameOver && Input.GetKeyDown(KeyCode.JoystickButton2))
+        if (isGameOver) return;
+
+        bool pressed = GetPauseButtonPressed();
+
+        if (pressed && !buttonWasPressed)
         {
             TogglePause();
         }
+
+        buttonWasPressed = pressed;
+    }
+
+    bool GetPauseButtonPressed()
+    {
+        List<InputDevice> devices = new List<InputDevice>();
+        InputDevices.GetDevicesAtXRNode(XRNode.LeftHand, devices);
+
+        foreach (var device in devices)
+        {
+            if (device.TryGetFeatureValue(CommonUsages.primaryButton, out bool pressed) && pressed)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void TogglePause()
