@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     public int score = 0;
 
     [Header("Score Display (3D Text)")]
-    public TextMeshPro scoreText3D;   // 3D TMP (NOT UGUI)
+    public TextMeshPro scoreTextFront;   // Front text
+    public TextMeshPro scoreTextBack;    // Back text (fake depth)
 
     private void Awake()
     {
@@ -44,9 +45,12 @@ public class GameManager : MonoBehaviour
 
     void UpdateScoreUI()
     {
-        if (scoreText3D != null)
-        {
-            scoreText3D.text = "Score: " + score;
-        }
+        string scoreString = "SCORE              " + score;
+
+        if (scoreTextFront != null)
+            scoreTextFront.text = scoreString;
+
+        if (scoreTextBack != null)
+            scoreTextBack.text = scoreString;
     }
 }
