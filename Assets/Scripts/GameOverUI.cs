@@ -3,31 +3,29 @@ using UnityEngine.SceneManagement;
 
 public class GameOverUI : MonoBehaviour
 {
-    [Header("Optional UI Panels")]
-    public GameObject gameOverPanel;
+    [Header("Scene Names")]
+    public string gameSceneName = "GameScene";
+    public string mainMenuSceneName = "MainMenu";
 
-    // Retry the current level
+    // Restart the game
     public void Retry()
     {
-        // Resume time before reloading
         Time.timeScale = 1f;
 
-        // Hide UI just in case
-        if (gameOverPanel != null)
-            gameOverPanel.SetActive(false);
-
-        // Reload current scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(gameSceneName);
     }
 
-    // Quit the game
+    // Go back to main menu
     public void Quit()
     {
-        Debug.Log("Quit Game");
-
-        // Always restore time scale
         Time.timeScale = 1f;
 
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    // Exit application (optional separate button)
+    public void ExitGame()
+    {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

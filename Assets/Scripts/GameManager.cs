@@ -5,11 +5,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public static int finalScore;   // used by GameOverScene
+
     public int score = 0;
 
     [Header("Score Display (3D Text)")]
-    public TextMeshPro scoreTextFront;   // Front text
-    public TextMeshPro scoreTextBack;    // Back text (fake depth)
+    public TextMeshPro scoreTextFront;
+    public TextMeshPro scoreTextBack;
 
     private void Awake()
     {
@@ -41,6 +43,11 @@ public class GameManager : MonoBehaviour
     {
         score = 0;
         UpdateScoreUI();
+    }
+
+    public void SaveFinalScore()
+    {
+        finalScore = score;
     }
 
     void UpdateScoreUI()

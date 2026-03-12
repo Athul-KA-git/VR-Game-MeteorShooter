@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
-using System.Collections.Generic;
 
 public class ShipHealth : MonoBehaviour
 {
@@ -12,8 +13,6 @@ public class ShipHealth : MonoBehaviour
     [Header("UI")]
     public ShipHealthUI healthUI;
     public GameObject pausePanel;
-    public GameObject gameOverPanel;
-    public TextMeshProUGUI gameOverScoreText;
 
     [Header("XR UI")]
     public XRRayInteractor rightRayInteractor;
@@ -152,18 +151,13 @@ public class ShipHealth : MonoBehaviour
     {
         isGameOver = true;
 
-        Time.timeScale = 0f;
+        Time.timeScale = 1f;
 
-        if (gameOverPanel != null)
-            gameOverPanel.SetActive(true);
+        // Save final score
+        if (GameManager.Instance != null)
+            GameManager.finalScore = GameManager.Instance.score;
 
-        if (gameOverScoreText != null && GameManager.Instance != null)
-            gameOverScoreText.text = "Final Score: " + GameManager.Instance.score;
-
-        if (rightRayInteractor != null)
-            rightRayInteractor.enabled = true;
-
-        if (leftRayInteractor != null)
-            leftRayInteractor.enabled = true;
+        // Load Game Over Scene
+        SceneManager.LoadScene("GameOverScene");
     }
 }
